@@ -102,6 +102,8 @@ void ProjectWidget::makeGUI()
     connect(grabberSourceCombo, SIGNAL(activated(int)), this, SLOT(changeGrabberSource(int)));
 #ifdef Q_OS_LINUX
     grabberSourceCombo->addItem(tr("Video 4 Linux 2 (USB WebCam)"));
+#endif
+#if defined(Q_OS_LINUX) || defined(Q_OS_OSX)
     grabberSourceCombo->addItem(tr("gphoto (USB Compact Camera)"));
 #endif
 
@@ -276,6 +278,9 @@ void ProjectWidget::apply()
 #endif
 #if defined(Q_OS_WIN32) || defined(Q_OS_WIN64)
         index = ImageGrabberDevice::mediaFoundationSource;
+#endif
+#ifdef Q_OS_OSX
+        index = ImageGrabberDevice::gphoto2Source;
 #endif
         break;
     case 1:

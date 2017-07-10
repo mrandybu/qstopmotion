@@ -28,8 +28,11 @@
   #include "technical/grabber/mediafoundation/mfgrabber.h"
 #endif
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) || defined(Q_OS_OSX)
   #include "technical/grabber/gphoto2/gpgrabber.h"
+#endif
+
+#ifdef Q_OS_LINUX
   #include "technical/grabber/video4linux2/v4l2grabber.h"
 #endif
 
@@ -137,7 +140,7 @@ void ImageGrabberFacade::initialization()
     }
 #endif
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) || defined(Q_OS_OSX)
     // gphoto2 device
     if (pref->getIntegerPreference("preferences", "gphoto2grabber", value) == false) {
         value = false;

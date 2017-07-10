@@ -41,14 +41,9 @@ IF(WIN32)
     ELSE(CMAKE_CL_64)
         message("Target platform: Windows 32bit")
     ENDIF(CMAKE_CL_64)
+ELSEIF(APPLE)
+    message("Target platform: MacOS 64bit")
 ELSEIF(UNIX)
-    IF(APPLE)
-        message(
-            FATAL_ERROR
-            "Target platform: MacOS 64bit - Not supported!"
-        )
-    ENDIF(APPLE)
-
     IF("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
         message("Target platform: Unix 64bit")
     ELSE("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
@@ -140,14 +135,21 @@ IF(WIN32)
     )
 ENDIF(WIN32)
 
-IF(UNIX AND NOT APPLE)
+IF(UNIX)
     SET(
         HEADERS
         ${HEADERS}
         src/technical/grabber/gphoto2/gpcontroller.h
-        src/technical/grabber/video4linux2/v4l2controller.h
     )
-ENDIF(UNIX AND NOT APPLE)
+
+    IF (NOT APPLE)
+        SET(
+            HEADERS
+            ${HEADERS}
+            src/technical/grabber/video4linux2/v4l2controller.h
+        )
+    ENDIF (NOT APPLE)
+ENDIF(UNIX)
 
 # add all header files of the project to MOC to MOC_HEADERS
 SET(
@@ -219,14 +221,21 @@ IF(WIN32)
     )
 ENDIF(WIN32)
 
-IF(UNIX AND NOT APPLE)
+IF(UNIX)
     SET(
         MOC_HEADERS
         ${MOC_HEADERS}
         src/technical/grabber/gphoto2/gpgrabber.h
-        src/technical/grabber/video4linux2/v4l2grabber.h
     )
-ENDIF(UNIX AND NOT APPLE)
+
+    IF (NOT APPLE)
+        SET(
+            MOC_HEADERS
+            ${MOC_HEADERS}
+            src/technical/grabber/video4linux2/v4l2grabber.h
+        )
+    ENDIF (NOT APPLE)
+ENDIF(UNIX)
 
 # add all source files to SOURCES
 SET(
@@ -315,16 +324,23 @@ IF(WIN32)
     )
 ENDIF(WIN32)
 
-IF(UNIX AND NOT APPLE)
+IF(UNIX)
     SET(
         SOURCES
         ${SOURCES}
         src/technical/grabber/gphoto2/gpcontroller.cpp
         src/technical/grabber/gphoto2/gpgrabber.cpp
-        src/technical/grabber/video4linux2/v4l2controller.cpp
-        src/technical/grabber/video4linux2/v4l2grabber.cpp
     )
-ENDIF(UNIX AND NOT APPLE)
+
+    IF (NOT APPLE)
+        SET(
+            SOURCES
+            ${SOURCES}
+            src/technical/grabber/video4linux2/v4l2controller.cpp
+            src/technical/grabber/video4linux2/v4l2grabber.cpp
+        )
+    ENDIF (NOT APPLE)
+ENDIF(UNIX)
 
 SET(
     TRANSLATIONS
@@ -387,20 +403,20 @@ SET(
 # used libraries: libgphoto2
 ###############################################################################
 
-IF(UNIX AND NOT APPLE)
+IF(UNIX)
     find_package(PkgConfig)
     pkg_check_modules(GPHOTO2 REQUIRED libgphoto2)
     message("GPHOTO2_INCLUDE_DIR: ${GPHOTO2_INCLUDE_DIR}")
     message("GPHOTO2_LIBRARIES: ${GPHOTO2_LIBRARIES}")
-ELSE(UNIX AND NOT APPLE)
+ELSE(UNIX)
     SET(GPHOTO2_INCLUDE_DIR)
     SET(GPHOTO2_LIBRARIES)
-ENDIF(UNIX AND NOT APPLE)
+ENDIF(UNIX)
 
 ###############################################################################
 # Video4Linux2 support
 #
-# (Only UNIX)
+# (Only UNIX, not APPLE)
 #
 # used libraries: libv4l2
 ###############################################################################
@@ -510,7 +526,6 @@ ELSEIF(APPLE)
     # Create a executable
     add_executable(
         qstopmotion
-        MACOSX_BUNDLE
         ${SOURCES}
         ${MOC_SOURCES}
     )
@@ -519,7 +534,6 @@ ELSEIF(APPLE)
     target_link_libraries(
         qstopmotion
         ${GPHOTO2_LIBRARIES}
-        ${V4L2_LIBRARIES}
         Qt5::Widgets
     )
 ELSEIF(WIN32)
@@ -588,7 +602,7 @@ IF(WIN32)
     ENDIF(CMAKE_CL_64)
 ENDIF(WIN32)
 
-IF(UNIX AND NOT APPLE)
+IF(UNIX)
     file(COPY graphics DESTINATION "share/qstopmotion/")
     file(COPY manual/ DESTINATION "share/doc/qstopmotion/")
     file(COPY translations DESTINATION "share/qstopmotion/")
@@ -598,7 +612,7 @@ IF(UNIX AND NOT APPLE)
     file(COPY ${UNIX_FILES} DESTINATION "share/qstopmotion/")
     file(COPY ${DEB_FILES} DESTINATION "share/qstopmotion/deb/")
     file(COPY ${RPM_FILES} DESTINATION "share/qstopmotion/rpm/")
-ENDIF(UNIX AND NOT APPLE)
+ENDIF(UNIX)
 
 ###############################################################################
 # Installation
@@ -618,7 +632,7 @@ IF(WIN32)
     SET(QSTOPMOTION_ICONS_INSTALL_DIR "icons")
 ENDIF(WIN32)
 
-IF(UNIX AND NOT APPLE)
+IF(UNIX)
     # The predefined CMake-Linux installer path is "/usr/local"
     # The predefined RPM installer path is "/usr"
     # The predefined DEB installer path is "/usr"
@@ -635,7 +649,7 @@ IF(UNIX AND NOT APPLE)
     SET(QSTOPMOTION_PIXMAP_INSTALL_DIR "share/pixmaps")
     SET(QSTOPMOTION_ICONS_INSTALL_DIR "share/icons")
     SET(QSTOPMOTION_MAN1_INSTALL_DIR "share/man/man1")
-ENDIF(UNIX AND NOT APPLE)
+ENDIF(UNIX)
 
 # installation of the executables
 install(

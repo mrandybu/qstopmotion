@@ -188,6 +188,15 @@ AboutDialog::AboutDialog(Frontend *f,
     case QSysInfo::MV_10_9:
         version.append("Mac OS X 10.9 (Mavericks)");
         break;
+    case QSysInfo::MV_10_10:
+        version.append("Mac OS X 10.10 (Yosemite)");
+        break;
+    case QSysInfo::MV_10_11:
+        version.append("Mac OS X 10.11 (El Capitan)");
+        break;
+    case QSysInfo::MV_10_12:
+        version.append("Mac OS X 10.12 (Sierra)");
+        break;
     default:
         version.append(tr("Unknown Mac OS"));
         break;

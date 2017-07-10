@@ -177,7 +177,7 @@ void GrabberWidget::initialize()
     mediaFoundationControllerCheck->hide();
 #endif
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) || defined(Q_OS_OSX)
     // gphoto2 device
     if (pref->getIntegerPreference("preferences", "gphoto2grabber", value) == false) {
         value = false;
