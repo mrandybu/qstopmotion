@@ -243,6 +243,9 @@ const QVector<ImageGrabberDevice*> ImageGrabberFacade::getDevices()
 
 ImageGrabberDevice* ImageGrabberFacade::getDevice(int deviceIndex)
 {
+    if (deviceIndex < 0 || deviceIndex >= devices.count())
+        return NULL;
+
     return devices[deviceIndex];
 }
 

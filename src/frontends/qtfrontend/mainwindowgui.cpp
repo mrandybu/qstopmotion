@@ -1735,7 +1735,12 @@ void MainWindowGUI::showCameraControllerDialog()
 {
     QRect fGeo = this->frameGeometry();
 
-    Q_ASSERT(grabber->getDevice(getVideoSource())->getController() != NULL);
+    ImageGrabberDevice *device = grabber->getDevice(getVideoSource());
+
+    if (device == NULL) {
+        frontend->showInformation("", tr("No camera connected"));
+        return;
+    }
 
     if (cameraControllerDialog == 0) {
         cameraControllerDialog = new CameraControllerDialog(frontend,
