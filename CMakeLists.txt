@@ -727,6 +727,12 @@ IF(UNIX AND NOT APPLE)
 ENDIF(UNIX AND NOT APPLE)
 
 IF(APPLE)
+    SET(MACOSX_BUNDLE_ICON_FILE qstopmotion.icns)
+    INSTALL (
+        FILES "bundle/qstopmotion.icns"
+        DESTINATION ${resources_dest_dir}
+    )
+
     # there is no standard way to get the plugin dir of Qt5 with cmake, the workaround
     # bellow is copied from the lxqt-qtplugin project's CMakeLists.txt
     #
