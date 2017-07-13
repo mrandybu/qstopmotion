@@ -362,9 +362,7 @@ int RecordingTab::getVideoSource()
 
 bool RecordingTab::setVideoSource(int index)
 {
-    Q_ASSERT(index >= 0);
-
-    if (index >= videoSourceCombo->count()) {
+    if (index < 0 || index >= videoSourceCombo->count()) {
         return false;
     }
     videoSourceCombo->setCurrentIndex(index);
