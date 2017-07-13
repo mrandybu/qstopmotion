@@ -686,6 +686,7 @@ IF(APPLE)
     SET(QSTOPMOTION_TRANSLATIONS_INSTALL_DIR "${resources_dest_dir}/translations")
     SET(QSTOPMOTION_MANUAL_INSTALL_DIR "${resources_dest_dir}/manual")
     SET(APPS "${CMAKE_INSTALL_PREFIX}/QStopMotion.app")
+    install(DIRECTORY DESTINATION "${CMAKE_INSTALL_PREFIX}/QStopMotion.app")
 ENDIF(APPLE)
 
 # installation of the executables
