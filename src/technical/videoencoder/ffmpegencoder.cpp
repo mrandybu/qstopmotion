@@ -70,8 +70,12 @@ FfmpegEncoder::FfmpegEncoder(AnimationProject *ap)
 
 #else
     // Linux and Apple OS X version
-
-    encoderCommand.append(QLatin1String("ffmpeg"));
+    QString localFfmpeg = QString("%1/ffmpeg").arg(animationProject->getFrontend()->getBinDirName());
+    if (QFile(localFfmpeg).exists()) {
+        encoderCommand.append(localFfmpeg);
+    } else {
+        encoderCommand.append(QLatin1String("ffmpeg"));
+    }
 
     // Prepare stop command
     stopCommand.append("");

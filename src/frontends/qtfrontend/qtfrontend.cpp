@@ -258,6 +258,8 @@ bool QtFrontend::checkApplicationDirectory(char *binDirName)
 
     if (QDir(resourcesDirName).exists()) {
         qDebug() << "Bundle detected, fixing resource paths";
+        appBinDirName.clear();
+        appBinDirName.append(QCoreApplication::applicationDirPath());
 
         appManualDirName.clear();
         appManualDirName.append(resourcesDirName);

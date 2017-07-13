@@ -653,14 +653,15 @@ IF(UNIX)
 ENDIF(UNIX)
 
 IF(APPLE)
-    SET(plugins_dest_dir QStopmotion.app/Contents)
-    SET(resources_dest_dir QStopmotion.app/Contents/Resources)
+    SET(plugins_dest_dir QStopMotion.app/Contents)
+    SET(binaries_dest_dir QStopMotion.app/Contents/MacOS)
+    SET(resources_dest_dir QStopMotion.app/Contents/Resources)
     SET(QSTOPMOTION_GRAPHICS_INSTALL_DIR "${resources_dest_dir}/graphics")
     SET(QSTOPMOTION_GRAPHICS_ICONS_INSTALL_DIR "${resources_dest_dir}/graphics/icons")
     SET(QSTOPMOTION_GRAPHICS_PICTURES_INSTALL_DIR "${resources_dest_dir}/graphics/pictures")
     SET(QSTOPMOTION_TRANSLATIONS_INSTALL_DIR "${resources_dest_dir}/translations")
     SET(QSTOPMOTION_MANUAL_INSTALL_DIR "${resources_dest_dir}/manual")
-    SET(APPS "\${CMAKE_INSTALL_PREFIX}/QStopmotion.app")
+    SET(APPS "${CMAKE_INSTALL_PREFIX}/QStopMotion.app")
 ENDIF(APPLE)
 
 # installation of the executables
@@ -758,6 +759,9 @@ IF(APPLE)
         DIRECTORY "${QT_PLUGINS_DIR}/imageformats"
         DESTINATION ${plugins_dest_dir}/plugins COMPONENT Runtime
     )
+
+    INSTALL( PROGRAMS /usr/local/Cellar/ffmpeg/3.3.2/bin/ffmpeg DESTINATION ${binaries_dest_dir}/ )
+
     INSTALL(
         CODE "file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${resources_dest_dir}/qt.conf\" \"\")"
         COMPONENT Runtime
