@@ -453,6 +453,30 @@ ELSE(WIN32)
 ENDIF(WIN32)
 
 ###############################################################################
+# FFmpeg
+#
+# (macOS only, since it will be included in the bundle)
+#
+###############################################################################
+IF (APPLE)
+    find_program(
+        FFMPEG
+        ffmpeg
+    )
+    IF (EXISTS ${FFMPEG})
+        get_filename_component(FFMPEG ${FFMPEG} REALPATH)
+        message("FFMPEG: ${FFMPEG}")
+    ELSE (EXISTS ${FFMPEG})
+        message(
+            FATAL_ERROR
+            "ffmpeg not found"
+        )
+    ENDIF (EXISTS ${FFMPEG})
+ENDIF(APPLE)
+
+
+
+###############################################################################
 # Directory definitions
 ###############################################################################
 
@@ -760,7 +784,9 @@ IF(APPLE)
         DESTINATION ${plugins_dest_dir}/plugins COMPONENT Runtime
     )
 
-    INSTALL( PROGRAMS /usr/local/Cellar/ffmpeg/3.3.2/bin/ffmpeg DESTINATION ${binaries_dest_dir}/ )
+    IF (FFMPEG)
+        INSTALL( PROGRAMS ${FFMPEG} DESTINATION ${binaries_dest_dir}/ )
+    ENDIF (FFMPEG)
 
     INSTALL(
         CODE "file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${resources_dest_dir}/qt.conf\" \"\")"
