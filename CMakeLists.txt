@@ -526,6 +526,7 @@ ELSEIF(APPLE)
     # Create a executable
     add_executable(
         qstopmotion
+        MACOSX_BUNDLE
         ${SOURCES}
         ${MOC_SOURCES}
     )
@@ -651,9 +652,21 @@ IF(UNIX)
     SET(QSTOPMOTION_MAN1_INSTALL_DIR "share/man/man1")
 ENDIF(UNIX)
 
+IF(APPLE)
+    SET(plugins_dest_dir QStopmotion.app/Contents)
+    SET(resources_dest_dir QStopmotion.app/Contents/Resources)
+    SET(QSTOPMOTION_GRAPHICS_INSTALL_DIR "${resources_dest_dir}/graphics")
+    SET(QSTOPMOTION_GRAPHICS_ICONS_INSTALL_DIR "${resources_dest_dir}/graphics/icons")
+    SET(QSTOPMOTION_GRAPHICS_PICTURES_INSTALL_DIR "${resources_dest_dir}/graphics/pictures")
+    SET(QSTOPMOTION_TRANSLATIONS_INSTALL_DIR "${resources_dest_dir}/translations")
+    SET(QSTOPMOTION_MANUAL_INSTALL_DIR "${resources_dest_dir}/manual")
+    SET(APPS "\${CMAKE_INSTALL_PREFIX}/QStopmotion.app")
+ENDIF(APPLE)
+
 # installation of the executables
 install(
     TARGETS qstopmotion
+    BUNDLE DESTINATION . COMPONENT Runtime
     RUNTIME DESTINATION ${QSTOPMOTION_BIN_INSTALL_DIR}
 )
 
@@ -712,6 +725,52 @@ IF(UNIX AND NOT APPLE)
         DESTINATION ${QSTOPMOTION_MAN1_INSTALL_DIR}
     )
 ENDIF(UNIX AND NOT APPLE)
+
+IF(APPLE)
+    # there is no standard way to get the plugin dir of Qt5 with cmake, the workaround
+    # bellow is copied from the lxqt-qtplugin project's CMakeLists.txt
+    #
+    # For more info see:
+    # https://github.com/lxde/lxqt-qtplugin/blob/master/src/CMakeLists.txt
+
+    get_target_property(QT_QMAKE_EXECUTABLE ${Qt5Core_QMAKE_EXECUTABLE} IMPORTED_LOCATION)
+    if(NOT QT_QMAKE_EXECUTABLE)
+        message(FATAL_ERROR "qmake is not found.")
+    endif()
+
+    # execute the command "qmake -query QT_INSTALL_PLUGINS" to get the path of plugins dir.
+    execute_process(COMMAND ${QT_QMAKE_EXECUTABLE} -query QT_INSTALL_PLUGINS
+        OUTPUT_VARIABLE QT_PLUGINS_DIR
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    INSTALL(
+        DIRECTORY "${QT_PLUGINS_DIR}/platforms"
+        DESTINATION ${plugins_dest_dir}/plugins COMPONENT Runtime
+    )
+    INSTALL(
+        DIRECTORY "${QT_PLUGINS_DIR}/imageformats"
+        DESTINATION ${plugins_dest_dir}/plugins COMPONENT Runtime
+    )
+    INSTALL(
+        CODE "file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${resources_dest_dir}/qt.conf\" \"\")"
+        COMPONENT Runtime
+    )
+    SET(
+        DIRS ${QT_LIBRARY_DIRS}
+    )
+    INSTALL(
+        CODE "
+            file(GLOB_RECURSE QTPLUGINS
+            \"\${CMAKE_INSTALL_PREFIX}/${plugins_dest_dir}/plugins/*${CMAKE_SHARED_LIBRARY_SUFFIX}\")
+            set(BU_CHMOD_BUNDLE_ITEMS 1)
+            include(BundleUtilities)
+            fixup_bundle(\"${APPS}\" \"\${QTPLUGINS}\" \"${DIRS}\")
+        "
+        COMPONENT Runtime
+    )
+
+ENDIF(APPLE)
 
 # installation on DEB systems
 IF(CPACK_BINARY_DEB)

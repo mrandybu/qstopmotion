@@ -250,7 +250,30 @@ bool QtFrontend::checkApplicationDirectory(char *binDirName)
     otherDirName.append(PreferencesTool::graphicsDirectory);
     otherDirName.append(QLatin1String("/"));
     appGraphicsDirName.append(otherDirName);
+#endif
 
+#if defined(Q_OS_OSX)
+    QString resourcesDirName = QCoreApplication::applicationDirPath();
+    resourcesDirName.append(QLatin1String("/../Resources/"));
+
+    if (QDir(resourcesDirName).exists()) {
+        qDebug() << "Bundle detected, fixing resource paths";
+
+        appManualDirName.clear();
+        appManualDirName.append(resourcesDirName);
+        appManualDirName.append(PreferencesTool::manualDirectory);
+        appTranslationsDirName.append(QLatin1String("/"));
+
+        appTranslationsDirName.clear();
+        appTranslationsDirName.append(resourcesDirName);
+        appTranslationsDirName.append(PreferencesTool::translationsDirectory);
+        appTranslationsDirName.append(QLatin1String("/"));
+
+        appGraphicsDirName.clear();
+        appGraphicsDirName.append(resourcesDirName);
+        appGraphicsDirName.append(PreferencesTool::graphicsDirectory);
+        appGraphicsDirName.append(QLatin1String("/"));
+    }
 #endif
 
     qDebug() << "QtFrontend::checkApplicationDirectory --> Application Manual Directory:" << appManualDirName;
