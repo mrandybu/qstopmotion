@@ -876,6 +876,8 @@ bool GphotoGrabber::canonEnableCapture(Camera       *gphotoCamera,
         return false;
     }
 
+    return true;
+
 }
 
 
